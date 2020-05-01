@@ -1,6 +1,16 @@
 package q003;
 
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.TreeMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Q003 集計と並べ替え
@@ -26,6 +36,9 @@ ignorance=1
  * http://eikaiwa.dmm.com/blog/4690/
  */
 public class Q003 {
+    static Map<String, Integer> countMap;
+    static String FIND_PATTERN = "([a-zA-Z-']+)([ ,.;]?)";
+
     /**
      * データファイルを開く
      * resources/q003/data.txt
@@ -33,5 +46,59 @@ public class Q003 {
     private static InputStream openDataFile() {
         return Q003.class.getResourceAsStream("data.txt");
     }
+
+    private static void setCount(String word) {
+        if (countMap.containsKey(word)) {
+            int count = countMap.get(word) + 1;
+            countMap.put(word, count);
+        } else {
+            countMap.put(word, 1);
+        }
+    }
+
+    private static void wordsCount() {
+        Map<String, Integer> map = new HashMap<>();
+        Pattern pattern = Pattern.compile(FIND_PATTERN);
+        Matcher matcher;
+
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(openDataFile()))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                matcher = pattern.matcher(line);
+                while (matcher.find()) {
+                    String word = matcher.group(1);
+                    if (word.equals("I")) {
+                        setCount(word);
+                    } else {
+                        setCount(word.toLowerCase());
+                    }
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static Map<String, Integer> sortWord() {
+        Map<String, Integer> treeMap = new TreeMap<String, Integer>(
+                new Comparator<String>() {
+                    @Override
+                    public int compare(String o1, String o2) {
+                        return o1.toLowerCase().compareTo(o2.toLowerCase());
+                    }
+                }
+        );
+        treeMap.putAll(countMap);
+        return treeMap;
+    }
+
+    public static void main(String[] args) {
+        countMap = new HashMap<String, Integer>();
+        wordsCount();
+
+        for (Entry<String, Integer> entry : sortWord().entrySet()) {
+            System.out.println(entry.getKey() + "=" + entry.getValue());
+        }
+    }
 }
-// 完成までの時間: xx時間 xx分
+// 完成までの時間: 02時間 00分
