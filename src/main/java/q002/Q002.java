@@ -45,5 +45,20 @@ public class Q002 {
             "14,林",
             "9,清水"
     };
+
+    private static String[] AlignmentData() {
+        String[] AlignmentDataList = new String[dataList.length];
+        for (String data : dataList) {
+            String[] text = data.split(",", 2);
+            AlignmentDataList[Integer.parseInt(text[0]) - 1] = data;
+        }
+        return AlignmentDataList;
+    }
+
+    public static void main(String[] args) {
+        for (String data : AlignmentData()) {
+            System.out.println(data);
+        }
+    }
 }
-// 完成までの時間: xx時間 xx分
+// 完成までの時間: 00時間 30分
